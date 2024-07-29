@@ -9,6 +9,7 @@ webpage_addresses = [
     "https://t.me/s/XpnTeam",
     "https://t.me/v2rayNGcloud",
     "https://t.me/s/ZibaNabz",
+    "https://t.me/s/BioNovember2k",
     "https://t.me/s/FreakConfig",
     "https://t.me/s/V_2rey",
     "https://t.me/s/V2ray_Alpha",
@@ -31,6 +32,7 @@ webpage_addresses = [
     "https://t.me/s/kingspeedchanel",
     "https://t.me/s/VPN_Xpace",
     "https://t.me/s/SVNTEAM",
+    "https://t.me/s/V2Line",
     "https://t.me/s/WPSNET"
 ]
 
