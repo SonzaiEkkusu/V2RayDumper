@@ -6,7 +6,7 @@ import jdatetime
 
 webpage_addresses = [
     "https://t.me/s/BioNovember2k",
-    "https://t.me/s/freecfgalloperator
+    "https://t.me/s/freecfgalloperator"
 ]
 
 def remove_duplicates(input_list):
