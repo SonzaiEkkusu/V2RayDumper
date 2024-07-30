@@ -5,35 +5,8 @@ import pytz
 import jdatetime
 
 webpage_addresses = [
-    "https://t.me/s/v2ray_configs_pool",
-    "https://t.me/s/XpnTeam",
-    "https://t.me/v2rayNGcloud",
-    "https://t.me/s/ZibaNabz",
     "https://t.me/s/BioNovember2k",
-    "https://t.me/s/FreakConfig",
-    "https://t.me/s/V_2rey",
-    "https://t.me/s/V2ray_Alpha",
-    "https://t.me/s/PROXY_MTM",
-    "https://t.me/s/SiNABiGO",
-    "https://t.me/s/v2rayng12023",
-    "https://t.me/s/vlessconfig",
-    "https://t.me/s/piazshekan",
-    "https://t.me/s/Free_Internet_Iran",
-    "https://t.me/s/ARv2ray",
-    "https://t.me/s/VPNCUSTOMIZE",
-    "https://t.me/s/UnlimitedDev",
-    "https://t.me/s/MARAMBASHI",
-    "https://t.me/s/PrivateVPNs",
-    "https://t.me/s/client_proo",
-    "https://t.me/s/nufilter",
-    "https://t.me/s/icv2ray",
-    "https://t.me/s/Vpn_Mikey",
-    "https://t.me/s/v2rayngvpn",
-    "https://t.me/s/kingspeedchanel",
-    "https://t.me/s/VPN_Xpace",
-    "https://t.me/s/SVNTEAM",
-    "https://t.me/s/V2Line",
-    "https://t.me/s/WPSNET"
+    "https://t.me/s/freecfgalloperator
 ]
 
 def remove_duplicates(input_list):
