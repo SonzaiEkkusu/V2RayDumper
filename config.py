@@ -80,7 +80,7 @@ with open("config.txt", "w", encoding="utf-8") as file:
         if i == 0:
             config_string = "#Updated " + final_string + " | New config every 1 hour"
         else:
-            config_string = "#🌐Server " + str(i) + "|Sonzaix"
+            config_string = "#Akun_" + str(i) + " @Sonzaix"
         config_final = code + config_string
         file.write(config_final + "\n")
         i += 1
