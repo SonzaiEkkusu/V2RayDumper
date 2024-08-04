@@ -9,7 +9,8 @@ webpage_addresses = [
     "https://t.me/s/freecfgalloperator",
     "https://t.me/s/channel_fightertunnell",
     "https://t.me/s/vpnbumiayu",
-    "https://t.me/s/testiretri"
+    "https://t.me/s/testiretri",
+    "https://t.me/s/v2Line"
 ]
 
 def remove_duplicates(input_list):
