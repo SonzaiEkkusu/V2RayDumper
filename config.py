@@ -11,7 +11,8 @@ webpage_addresses = [
     "https://t.me/s/vpnbumiayu",
     "https://t.me/s/testiretri",
     "https://t.me/s/v2Line",
-    "https://t.me/TbVPNstoreG/1332"
+    "https://t.me/s/TbVPNstoreG/1332",
+    "https://t.me/s/v_mess"
 ]
 
 def remove_duplicates(input_list):
