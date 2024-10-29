@@ -1,80 +1,62 @@
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, timezone
+from datetime import datetime
 import pytz
 import jdatetime
 
+# List alamat web
 webpage_addresses = [
     "https://t.me/s/freecfgalloperator"
 ]
 
+# Fungsi untuk menghapus duplikasi dengan menggunakan set
 def remove_duplicates(input_list):
-    unique_list = []
-    for item in input_list:
-        if item not in unique_list:
-            unique_list.append(item)
-    return unique_list
+    return list(set(input_list))
 
+# Ambil halaman HTML dari setiap URL dan kumpulkan teks di dalam tag <code>
+def fetch_html_content(urls):
+    html_pages = []
+    for url in urls:
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()  # Tambah penanganan error
+            html_pages.append(response.text)
+        except requests.RequestException as e:
+            print(f"Gagal mengakses {url}: {e}")
+    return html_pages
 
-html_pages = []
+# Ekstraksi kode dari setiap halaman HTML
+def extract_codes(pages):
+    codes = []
+    for page in pages:
+        soup = BeautifulSoup(page, 'html.parser')
+        code_tags = soup.find_all('code')
+        
+        for code_tag in code_tags:
+            code_content = code_tag.text.strip()
+            if any(proto in code_content for proto in ["vless://", "vmess://", "trojan://"]):
+                codes.append(code_content)
+    return remove_duplicates(codes)
 
-for url in webpage_addresses:
-    response = requests.get(url)
-    html_pages.append(response.text)
+# Siapkan penanda waktu untuk config
+def generate_timestamp():
+    current_date_time = jdatetime.datetime.now(pytz.timezone('Asia/Jakarta'))
+    formatted_date = current_date_time.strftime("%b-%d | %H:%M")
+    return f"#✅ {formatted_date}-"
 
-codes = []
+# Proses dan simpan kode dalam file
+def save_codes(codes, filename="config.txt"):
+    timestamp = generate_timestamp()
+    with open(filename, "w", encoding="utf-8") as file:
+        for i, code in enumerate(codes):
+            if i == 0:
+                config_string = "#Updated " + timestamp + " | New config every 1 hour"
+            else:
+                config_string = f"#Akun_{i} @Sonzaix"
+            config_final = f"{code} {config_string}"
+            file.write(config_final + "\n")
 
-for page in html_pages:
-    soup = BeautifulSoup(page, 'html.parser')
-    code_tags = soup.find_all('code')
-
-    for code_tag in code_tags:
-        code_content = code_tag.text.strip()
-        if "vless://" in code_content or "vmess://" in code_content or "trojan://" in code_content:
-            codes.append(code_content)
-
-codes = list(set(codes))
-processed_codes = []
-current_date_time = jdatetime.datetime.now(pytz.timezone('Asia/Jakarta'))
-current_month = current_date_time.strftime("%b")
-current_day = current_date_time.strftime("%d")
-updated_hour = current_date_time.strftime("%H")
-updated_minute = current_date_time.strftime("%M")
-final_string = f"{current_month}-{current_day} | {updated_hour}:{updated_minute}"
-final_others_string = current_date_time.strftime("%d/%m/%Y")
-config_string = "#✅ " + str(final_string) + "-"
-
-for code in codes:
-    vmess_parts = code.split("vmess://")
-    vless_parts = code.split("vless://")
-
-    for part in vmess_parts + vless_parts:
-        if "vmess://" in part or "vless://" in part or "trojan://" in part:
-            service_name = part.split("serviceName=")[-1].split("&")[0]
-            processed_part = part.split("#")[0]
-            processed_codes.append(processed_part)
-
-processed_codes = remove_duplicates(processed_codes)
-
-new_processed_codes = []
-
-for code in processed_codes:
-    vmess_parts = code.split("vmess://")
-    vless_parts = code.split("vless://")
-
-    for part in vmess_parts + vless_parts:
-        if "vmess://" in part or "vless://" in part or "trojan://" in part:
-            service_name = part.split("serviceName=")[-1].split("&")[0]
-            processed_part = part.split("#")[0]
-            new_processed_codes.append(processed_part)
-
-i = 0
-with open("config.txt", "w", encoding="utf-8") as file:
-    for code in new_processed_codes:
-        if i == 0:
-            config_string = "#Updated " + final_string + " | New config every 1 hour"
-        else:
-            config_string = "#Akun_" + str(i) + " @Sonzaix"
-        config_final = code + config_string
-        file.write(config_final + "\n")
-        i += 1
+# Eksekusi seluruh proses
+html_pages = fetch_html_content(webpage_addresses)
+codes = extract_codes(html_pages)
+save_codes(codes)
