@@ -5,14 +5,7 @@ import pytz
 import jdatetime
 
 webpage_addresses = [
-    "https://t.me/s/November2kBio",
-    "https://t.me/s/freecfgalloperator",
-    "https://t.me/s/channel_fightertunnell",
-    "https://t.me/s/vpnbumiayu",
-    "https://t.me/s/testiretri",
-    "https://t.me/s/v2Line",
-    "https://t.me/s/TbVPNstoreG/1332",
-    "https://t.me/s/v_mess"
+    "https://t.me/s/freecfgalloperator"
 ]
 
 def remove_duplicates(input_list):
