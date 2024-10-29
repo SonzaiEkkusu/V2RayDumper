@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import re
+import base64
 from datetime import datetime
 import pytz
 import jdatetime
@@ -19,23 +21,40 @@ def fetch_html_content(urls):
     for url in urls:
         try:
             response = requests.get(url, timeout=10)
-            response.raise_for_status()  # Tambah penanganan error
+            response.raise_for_status()
             html_pages.append(response.text)
+            print(f"Berhasil mengambil konten dari {url}")
         except requests.RequestException as e:
             print(f"Gagal mengakses {url}: {e}")
     return html_pages
 
-# Ekstraksi kode dari setiap halaman HTML
+# Ekstraksi kode dari setiap halaman HTML dengan regex
 def extract_codes(pages):
     codes = []
+    vless_pattern = r"vless://[^\s]+"
+    vmess_pattern = r"vmess://[^\s]+"
+
     for page in pages:
         soup = BeautifulSoup(page, 'html.parser')
-        code_tags = soup.find_all('code')
-        
-        for code_tag in code_tags:
-            code_content = code_tag.text.strip()
-            if any(proto in code_content for proto in ["vless://", "vmess://", "trojan://"]):
-                codes.append(code_content)
+        page_text = soup.get_text()
+
+        # Cari link vless
+        vless_links = re.findall(vless_pattern, page_text)
+        codes.extend(vless_links)
+
+        # Cari link vmess
+        vmess_links = re.findall(vmess_pattern, page_text)
+        for link in vmess_links:
+            # Decode VMESS link jika dienkripsi dalam base64
+            if link.startswith("vmess://"):
+                try:
+                    base64_content = link[8:]
+                    decoded_link = base64.b64decode(base64_content).decode('utf-8')
+                    codes.append(decoded_link)
+                except Exception as e:
+                    print(f"Error decoding VMESS link: {e}")
+                    continue
+
     return remove_duplicates(codes)
 
 # Siapkan penanda waktu untuk config
@@ -46,15 +65,23 @@ def generate_timestamp():
 
 # Proses dan simpan kode dalam file
 def save_codes(codes, filename="config.txt"):
+    if not codes:
+        print("Tidak ada kode yang ditemukan untuk disimpan.")
+        return
+    
     timestamp = generate_timestamp()
-    with open(filename, "w", encoding="utf-8") as file:
-        for i, code in enumerate(codes):
-            if i == 0:
-                config_string = "#Updated " + timestamp + " | New config every 1 hour"
-            else:
-                config_string = f"#Akun_{i} @Sonzaix"
-            config_final = f"{code} {config_string}"
-            file.write(config_final + "\n")
+    try:
+        with open(filename, "w", encoding="utf-8") as file:
+            for i, code in enumerate(codes):
+                if i == 0:
+                    config_string = "#Updated " + timestamp + " | New config every 1 hour"
+                else:
+                    config_string = f"#Akun_{i} @Sonzaix"
+                config_final = f"{code} {config_string}"
+                file.write(config_final + "\n")
+        print(f"Berhasil menyimpan kode ke {filename}")
+    except IOError as e:
+        print(f"Gagal menyimpan file: {e}")
 
 # Eksekusi seluruh proses
 html_pages = fetch_html_content(webpage_addresses)
