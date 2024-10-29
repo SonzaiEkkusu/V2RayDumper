@@ -1,39 +1,44 @@
-name: Start Dumper
+name: Fetch Telegram Links
 
 on:
-  push:
-      branches:
-        - main
   schedule:
-    - cron: "0 * * * *"
+    - cron: '0 0 * * *'  # Jalankan setiap hari pada tengah malam UTC
+  workflow_dispatch:  # Memungkinkan pemicu manual
+
 jobs:
-  build:
+  fetch_links:
     runs-on: ubuntu-latest
-      
-    permissions:
-      contents: write
 
     steps:
-      - name: checkout repo content
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: setup python
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
-          
-      - name: install python packages
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python-version: '3.x'
 
-      - name: execute py script
+      - name: Install Dependencies
         run: |
-          python config.py
+          pip install selenium
 
-      - name: setup git config
+      - name: Install Chrome and ChromeDriver
         run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          sudo apt-get install -y google-chrome-stable
+          wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
+          unzip /tmp/chromedriver.zip -d /usr/local/bin/
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Run Fetch Links Script
+        run: python fetch_links.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add config.txt
+          git commit -m "Update config.txt with latest Telegram links" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
