@@ -1,89 +1,98 @@
 import requests
 from bs4 import BeautifulSoup
-import re
-import base64
-from datetime import datetime
+from datetime import datetime, timezone
 import pytz
 import jdatetime
 
-# List alamat web
-webpage_addresses = [
-    "https://t.me/s/freecfgalloperator"
+old_webpage_addresses = [
+        "https://t.me/s/freecfgalloperator",
 ]
 
-# Fungsi untuk menghapus duplikasi dengan menggunakan set
+webpage_addresses = [
+		"https://t.me/s/freecfgalloperator",
+]
+
 def remove_duplicates(input_list):
-    return list(set(input_list))
+    unique_list = []
+    for item in input_list:
+        if item not in unique_list:
+            unique_list.append(item)
+    return unique_list
 
-# Ambil halaman HTML dari setiap URL dan kumpulkan teks di dalam tag <code>
-def fetch_html_content(urls):
-    html_pages = []
-    for url in urls:
-        try:
-            response = requests.get(url, timeout=10)
-            response.raise_for_status()
-            html_pages.append(response.text)
-            print(f"Berhasil mengambil konten dari {url}")
-        except requests.RequestException as e:
-            print(f"Gagal mengakses {url}: {e}")
-    return html_pages
 
-# Ekstraksi kode dari setiap halaman HTML dengan regex
-def extract_codes(pages):
-    codes = []
-    vless_pattern = r"vless://[^\s]+"
-    vmess_pattern = r"vmess://[^\s]+"
+html_pages = []
 
-    for page in pages:
-        soup = BeautifulSoup(page, 'html.parser')
-        page_text = soup.get_text()
+for url in old_webpage_addresses:
+    response = requests.get(url)
+    html_pages.append(response.text)
 
-        # Cari link vless
-        vless_links = re.findall(vless_pattern, page_text)
-        codes.extend(vless_links)
+codes = []
 
-        # Cari link vmess
-        vmess_links = re.findall(vmess_pattern, page_text)
-        for link in vmess_links:
-            # Decode VMESS link jika dienkripsi dalam base64
-            if link.startswith("vmess://"):
-                try:
-                    base64_content = link[8:]
-                    decoded_link = base64.b64decode(base64_content).decode('utf-8')
-                    codes.append(decoded_link)
-                except Exception as e:
-                    print(f"Error decoding VMESS link: {e}")
-                    continue
+for page in html_pages:
+    soup = BeautifulSoup(page, 'html.parser')
+    code_tags = soup.find_all('code')
 
-    return remove_duplicates(codes)
+    for code_tag in code_tags:
+        code_content = code_tag.text.strip()
+        if "vless://" in code_content or "ss://" in code_content or "vmess://" in code_content or "trojan://" in code_content:
+            codes.append(code_content)
 
-# Siapkan penanda waktu untuk config
-def generate_timestamp():
-    current_date_time = jdatetime.datetime.now(pytz.timezone('Asia/Jakarta'))
-    formatted_date = current_date_time.strftime("%b-%d | %H:%M")
-    return f"#✅ {formatted_date}-"
+codes = list(set(codes))  # Remove duplicates
 
-# Proses dan simpan kode dalam file
-def save_codes(codes, filename="config.txt"):
-    if not codes:
-        print("Tidak ada kode yang ditemukan untuk disimpan.")
-        return
-    
-    timestamp = generate_timestamp()
-    try:
-        with open(filename, "w", encoding="utf-8") as file:
-            for i, code in enumerate(codes):
-                if i == 0:
-                    config_string = "#Updated " + timestamp + " | New config every 1 hour"
-                else:
-                    config_string = f"#Akun_{i} @Sonzaix"
-                config_final = f"{code} {config_string}"
-                file.write(config_final + "\n")
-        print(f"Berhasil menyimpan kode ke {filename}")
-    except IOError as e:
-        print(f"Gagal menyimpan file: {e}")
+processed_codes = []
 
-# Eksekusi seluruh proses
-html_pages = fetch_html_content(webpage_addresses)
-codes = extract_codes(html_pages)
-save_codes(codes)
+# Get the current date and time
+current_date_time = jdatetime.datetime.now(pytz.timezone('Asia/Tehran'))
+# Print the current month in letters
+current_month = current_date_time.strftime("%b")
+
+# Get the current day as a string
+current_day = current_date_time.strftime("%d")
+
+# Increase the current hour by 4 hours
+#new_date_time = current_date_time + timedelta(hours=4)
+
+# Get the updated hour as a string
+updated_hour = current_date_time.strftime("%H")
+
+updated_minute = current_date_time.strftime("%M")
+
+# Combine the strings to form the final result
+final_string = f"{current_month}-{current_day} | {updated_hour}:{updated_minute}"
+final_others_string = f"{current_month}-{current_day}"
+config_string = "#✅ " + str(final_string) + "-"
+
+for code in codes:
+    vmess_parts = code.split("vmess://")
+    vless_parts = code.split("vless://")
+
+    for part in vmess_parts + vless_parts:
+        if "ss://" in part or "vmess://" in part or "vless://" in part or "trojan://" in part:
+            service_name = part.split("serviceName=")[-1].split("&")[0]
+            processed_part = part.split("#")[0]
+            processed_codes.append(processed_part)
+
+processed_codes = remove_duplicates(processed_codes)
+
+new_processed_codes = []
+
+for code in processed_codes:
+    vmess_parts = code.split("vmess://")
+    vless_parts = code.split("vless://")
+
+    for part in vmess_parts + vless_parts:
+        if "ss://" in part or "vmess://" in part or "vless://" in part or "trojan://" in part:
+            service_name = part.split("serviceName=")[-1].split("&")[0]
+            processed_part = part.split("#")[0]
+            new_processed_codes.append(processed_part)
+
+i = 0
+with open("config.txt", "w", encoding="utf-8") as file:
+    for code in new_processed_codes:
+        if i == 0:
+            config_string = "#🌐 به روزرسانی شده در" + final_string + " | هر 15 دقیقه کانفیگ جدید داریم"
+        else:
+            config_string = "#🌐سرور " + str(i) + " | " + str(final_others_string) + "| MTSRVRS"
+        config_final = code + config_string
+        file.write(config_final + "\n")
+        i += 1
