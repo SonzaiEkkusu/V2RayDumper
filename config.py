@@ -136,23 +136,19 @@ codes = list(set(codes))  # Remove duplicates
 
 processed_codes = []
 
-# Get the current date and time
-current_date_time = jdatetime.datetime.now(pytz.timezone('Asia/Tehran'))
-# Print the current month in letters
+current_date_time = jdatetime.datetime.now(pytz.timezone('Asia/Jakarta'))
+
 current_month = current_date_time.strftime("%b")
 
-# Get the current day as a string
 current_day = current_date_time.strftime("%d")
 
 # Increase the current hour by 4 hours
 #new_date_time = current_date_time + timedelta(hours=4)
 
-# Get the updated hour as a string
 updated_hour = current_date_time.strftime("%H")
 
 updated_minute = current_date_time.strftime("%M")
 
-# Combine the strings to form the final result
 final_string = f"{current_month}-{current_day} | {updated_hour}:{updated_minute}"
 final_others_string = f"{current_month}-{current_day}"
 config_string = "#✅ " + str(final_string) + "-"
@@ -185,9 +181,9 @@ i = 0
 with open("config.txt", "w", encoding="utf-8") as file:
     for code in new_processed_codes:
         if i == 0:
-            config_string = "#🌐 به روزرسانی شده در" + final_string + " | هر 15 دقیقه کانفیگ جدید داریم"
+            config_string = "#🌐 Updated on" + final_string + " | Every 15 Minutes"
         else:
-            config_string = "#🌐سرور " + str(i) + " | " + str(final_others_string) + "| MTSRVRS"
+            config_string = "#🌐 Server" + str(i) + " | " + str(final_others_string) + "| Sonzai X シ"
         config_final = code + config_string
         file.write(config_final + "\n")
         i += 1
