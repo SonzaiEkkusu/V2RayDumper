@@ -183,7 +183,7 @@ with open("config.txt", "w", encoding="utf-8") as file:
         if i == 0:
             config_string = "#🌐 Updated on" + final_string + " | Every 15 Minutes"
         else:
-            config_string = "#🌐 Server" + str(i) + " | " + str(final_others_string) + "| Sonzai X シ"
+            config_string = "#🌐 Server" + str(i) + "| Sonzai X シ"
         config_final = code + config_string
         file.write(config_final + "\n")
         i += 1
